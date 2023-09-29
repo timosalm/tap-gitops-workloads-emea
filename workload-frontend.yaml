@@ -11,10 +11,10 @@ metadata:
 spec:
   source:
     git:
-      url: https://github.com/tsalm-pivotal/spring-cloud-demo-tap.git
+      url: https://github.com/timosalm/tap-spring-developer-workshop.git
       ref:
         branch: main
-    subPath: frontend
+    subPath: setup/frontend
   build:
     env:
     - name: BP_NODE_RUN_SCRIPTS
