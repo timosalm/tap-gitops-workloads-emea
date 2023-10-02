@@ -2,7 +2,6 @@ apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
   name: inclusion
-  namespace: default
   annotations:
     autoscaling.knative.dev/min-scale: "3"
   labels:
