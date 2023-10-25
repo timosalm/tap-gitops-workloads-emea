@@ -1,0 +1,78 @@
+apiVersion: "sso.apps.tanzu.vmware.com/v1alpha1"
+kind: AuthServer
+metadata:
+  name: authserver-1
+  labels:
+    name: authserver-1
+    namespace: sc-architecture
+  annotations:
+    sso.apps.tanzu.vmware.com/allow-client-namespaces: "sc-architecture"
+    sso.apps.tanzu.vmware.com/allow-unsafe-identity-provider: ""
+    sso.apps.tanzu.vmware.com/allow-unsafe-cors: ""
+spec:
+  replicas: 1
+  tls:
+    issuerRef:
+      name: tap-ingress-selfsigned
+      kind: ClusterIssuer  
+  identityProviders:
+    - name: "internal"
+      internalUnsafe:
+        users:
+          - username: "developer"
+            password: "123456"
+            email: "developer@example.com"
+            emailVerified: true
+            roles:
+              - "user"
+  tokenSignature:
+    signAndVerifyKeyRef:
+      name: "authserver-signing-key"
+  cors:
+    allowAllOrigins: true
+---
+apiVersion: secretgen.k14s.io/v1alpha1
+kind: RSAKey
+metadata:
+  name: authserver-signing-key
+  namespace: sc-architecture
+spec:
+  secretTemplate:
+    type: Opaque
+    stringData:
+      key.pem: $(privateKey)
+      pub.pem: $(publicKey)
+---
+apiVersion: sso.apps.tanzu.vmware.com/v1alpha1
+kind: ClientRegistration
+metadata:
+  name: client-registration
+  namespace: sc-architecture
+spec:
+  authServerSelector:
+    matchLabels:
+      name: authserver-1
+      namespace: sc-architecture
+  redirectURIs:
+  -  https://gateway-sc-architecture.main.emea.end2end.link/frontend/index.html
+  clientAuthenticationMethod: none
+  authorizationGrantTypes:
+    - "client_credentials"
+    - "authorization_code"
+    - "refresh_token"
+  scopes:
+  - name: openid
+  - name: offline_access
+  - name: email
+  - name: profile
+  - name: roles
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ResourceClaim
+metadata:
+  name: auth-client
+spec:
+  ref:
+    apiVersion: sso.apps.tanzu.vmware.com/v1alpha1
+    kind: ClientRegistration
+    name: client-registration
