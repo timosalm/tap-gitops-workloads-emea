@@ -1,0 +1,52 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  annotations:
+    autoscaling.knative.dev/min-scale: "1"
+  labels:
+    apis.apps.tanzu.vmware.com/register-api: "true"
+    app.kubernetes.io/part-of: gateway
+    apps.tanzu.vmware.com/has-tests: "true"
+    apps.tanzu.vmware.com/workload-type: web
+  name: gateway
+  namespace: sc-architecture
+spec:
+  build:
+    env:
+    - name: BP_JVM_VERSION
+      value: "17"
+  params:
+  - name: api_descriptor
+    value:
+      description: A set of API endpoints to manage the resources within the Spring
+        Cloud Architecture app.
+      location:
+        path: /v3/api-docs
+      owner: team-vmware-tanzu-se
+      system: sc-architecture-system
+      type: openapi
+  - name: testing_pipeline_params
+    value:
+      source-sub-path: gateway
+  serviceClaims:
+  - name: config-server
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ResourceClaim
+      name: configserver-binding-compatible
+  - name: observability
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ResourceClaim
+      name: observability-binding-compatible
+  - name: auth-client
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ResourceClaim
+      name: auth-client
+  source:
+    git:
+      ref:
+        branch: main
+      url: https://github.com/timosalm/spring-cloud-demo-tap.git
+    subPath: gateway
