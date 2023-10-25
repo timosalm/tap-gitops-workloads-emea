@@ -26,12 +26,12 @@ spec:
     ref:
       apiVersion: services.apps.tanzu.vmware.com/v1alpha1
       kind: ResourceClaim
-      name: configserver-1
+      name: configserver-binding-compatible
   - name: observability
     ref:
       apiVersion: services.apps.tanzu.vmware.com/v1alpha1
       kind: ResourceClaim
-      name: zipkin-1
+      name: observability-binding-compatible
   source:
     git:
       ref:
