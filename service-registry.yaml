@@ -1,0 +1,19 @@
+apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+kind: EurekaServer
+metadata:
+  name: eurekaserver-1
+  namespace: sc-architecture
+spec:
+  replicas: 2
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ResourceClaim
+metadata:
+  name: eurekaserver-1
+  namespace: sc-architecture
+spec:
+  ref:
+    apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+    kind: EurekaServer
+    name: eurekaserver-1
+    namespace: sc-architecture
