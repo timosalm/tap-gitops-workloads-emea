@@ -4,7 +4,7 @@ metadata:
   name: eurekaserver-1
   namespace: sc-architecture
 spec:
-  replicas: 2
+  replicas: 1
 ---
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ResourceClaim
